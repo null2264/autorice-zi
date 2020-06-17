@@ -12,10 +12,11 @@ checkdisks() {
 	read -r DRIVE
 	echo -e ""
 	(
-	echo o
+	echo o # Create new DOS disklabel
 	echo n
 	echo p
 	echo 1
+	echo 
 	echo +4G
 	echo w
 	) | fdisk $DRIVE
