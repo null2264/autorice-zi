@@ -7,7 +7,7 @@ user_zone(){
 	echo -e "\nNearest Big City: (Default: Jakarta)"
 	read -r CITY
 	[ -z $CITY ] && CITY="Jakarta"
-	cat /usr/share/zoneinfo/$REGION/$CITY >/dev/null 2>/dev/null || echo "Zone is not found, please try again" && user_zone
+	cat /usr/share/zoneinfo/$REGION/$CITY >/dev/null || user_zone
 }
 
 local_setting(){
@@ -19,7 +19,7 @@ local_setting(){
 	#locale
 	sed -i 's/\#en_US\./en_US\./g' /etc/locale.gen
 	locale-gen
-	pacman -S grub os-prober
+	pacman -S --noconfirm grub os-prober
 	grub-install --recheck /dev/sda
 	grub-mkconfig -o /boot/grub/grub.cfg
 }
@@ -29,7 +29,8 @@ ask_pass(){
 	read -s PASS
 	echo -e "\nRetype Password:"
 	read -s RE_PASS
-	
+	echo ""
+
 	[ ! "$PASS" = "$RE_PASS" ] && ask_pass
 }
 
@@ -47,9 +48,11 @@ set_user(){
 	echo $PASS
 	echo $PASS
 	) | passwd $USER
-	
+	usermod -aG games,video,storage,optical,audio,wheel $USER
+	sed -i 's/\# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers
+
 	echo $USER > /etc/hostname
-	pacman -S dhcpcd connman-openrc connman-gtk cmst
+	pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst
 	rc-update add connmand
 	ip -s link
 	echo -e "\nPut in the correct interface:"
