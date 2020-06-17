@@ -49,6 +49,8 @@ diskpart() {
 	echo 2 # Number 2
 	echo   # First sector default
 	echo   # Size: the rest of the disk
+	echo t # change partition type
+	echo 83 # to Linux (to make sure it is Linux)
 	echo a # toggle bootable
 	echo 2 # choose partition number 2
 	echo w # write
@@ -57,5 +59,6 @@ diskpart() {
 }
 
 # Installation steps
+clear
 checksudo
 diskpart
