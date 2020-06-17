@@ -24,6 +24,13 @@ checkdisks() {
 	echo +$SWAP\G # Size: 4G
 	echo t # change partition type
 	echo 82 # to swap
+	echo n # New partition
+	echo p # Primary
+	echo 2 # Number 2
+	echo   # First sector default
+	echo   # Size: the rest of the disk
+	echo a # toggle bootable
+	echo 2 # choose partition number 2
 	echo w # write
 	) | fdisk $DRIVE
 	echo "Done"
