@@ -79,7 +79,7 @@ init_install(){
 	basestrap /mnt base base-devel openrc linux linux-firmware
 	echo "Installation will start in 5 second...." && sleep 5s && echo "Installing..."
 	fstabgen -U /mnt >>/mnt/etc/fstab
-	echo -e "\nArtix Linux has been install, now run chroot-os"
+	echo -e "\nArtix Linux has been install, now download & run chroot-os"
 	artools-chroot /mnt
 }
 

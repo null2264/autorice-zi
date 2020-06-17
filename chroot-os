@@ -62,6 +62,9 @@ set_user(){
 	config_$INT=\"dhcp\"" >> /etc/conf.d/net
 	ln -s /etc/init.d/net.lo /etc/init.d/net.$INT
 	rc-update add net.$INT default
+	echo "Checking dhcpcd..."
+	[ "$(pacman -Q | grep "dhcpcd")" ] || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst
+	echo "Install completed\n"
 	echo "
 	Now type:
 	exit
