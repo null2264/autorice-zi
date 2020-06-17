@@ -1,0 +1,15 @@
+#!/bin/sh
+
+checksudo() {
+	if [ "$(id -u)" != "0" ]; then
+		echo "[ ERROR ] Run the script as sudo!" && exit 1
+	fi
+}
+
+checkdisks() {
+	fdisk
+}
+
+# Installation steps
+
+checksudo
