@@ -59,7 +59,46 @@ diskpart() {
 	echo "Done"
 }
 
+diskpart_setting(){
+	mkfs.ext4 -L ROOT /dev/sda2
+	mkswap -L SWAP /dev/sda1
+
+	swapon /dev/disk/by-label/SWAP
+	mount /dev/disk/by-label/ROOT /mnt
+	mkdir /mnt/boot
+	mkdir /mnt/home
+}
+
+check_internet(){
+	[ "$(ping -q -c 1 -W 1 artixlinux.org)" ] && echo " [ OK ] Connected to Internet" || exit 1
+}
+
+init_install(){
+	check_internet && pacman -Syy
+	basestrap /mnt base base-devel openrc linux linux-firmware
+	echo "Installation will start in 5 second...." && sleep 5s && "Installing"
+	fstabgen -U /mnt >>/mnt/etc/fstab
+	echo "Artix Linux has been install, configuring..."
+	artools-chroot /mnt
+}
+
+user_zone(){
+	echo -e "\nRegion:"
+	read -r REGION
+	echo -e "\nNearest Big City:"
+	read -r CITY
+	cat /usr/share/zoneinfo/$REGION/$CITY >/dev/null 2>/dev/null || echo "Zone is not found, please try again" && user_zone
+}
+
+local_setting(){
+	#clock
+	user_zone
+	ln -sf /usr/share/zoneinfo/$REGION/$CITY
+}
+
 # Installation steps
 checksudo
 clear
 diskpart
+diskpart_setting
+init_install
