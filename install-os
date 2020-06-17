@@ -1,12 +1,23 @@
 #!/bin/sh
 
+prompt() {
+	read -r YESNO
+	if [ "$YESNO" = "yes"]; then
+		return
+	elif [ "$YESNO" = "no" ]; then
+		echo "[ ERROR ] Cancelled" && exit 1
+	else
+		prompt
+	fi
+}
+
 checksudo() {
 	if [ "$(id -u)" != "0" ]; then
 		echo "[ ERROR ] Script must be run as sudo!" && exit 1
 	fi
 }
 
-checkdisks() {
+diskpart() {
 	fdisk -l
 	echo -e "\nChoose the disk: (/dev/sdX)"
 	read -r DRIVE
@@ -15,6 +26,8 @@ checkdisks() {
 	else 
 		echo "[ ERROR ] $DRIVE not found" && exit 1
 	fi
+	echo "\nAre you sure $DRIVE is the correct location? (yes/no)"
+	prompt
 	echo ""
 	free --giga
 	echo -e "\nEnter your RAM value: (Eg: 5)"
@@ -43,4 +56,4 @@ checkdisks() {
 
 # Installation steps
 checksudo
-checkdisks
+diskpart
