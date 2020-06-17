@@ -10,7 +10,7 @@ checkdisks() {
 	fdisk -l
 	echo -e "\nChoose the disk: (/dev/sdX)"
 	read -r DRIVE
-	[ $(fdisk -l | grep "$DRIVE" | wc -l) -gt 0 ] && echo "[ OK ] Found $DRIVE" || echo "[ ERROR ] $DRIVE not found" && exit 1
+	[ $(fdisk -l | grep "$DRIVE" | wc -l) -gt 0 ] && echo "[ OK ] Found $DRIVE" && exit 0 || echo "[ ERROR ] $DRIVE not found" && exit 1
 	echo ""
 	free --giga
 	echo -e "\nEnter your RAM value: (Eg: 5)"
