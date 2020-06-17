@@ -1,0 +1,72 @@
+#!/bin/sh
+
+user_zone(){
+	echo -e "\nRegion: (Default: Asia)"
+	read -r REGION
+	[ -z $REGION ] && REGION="Asia"
+	echo -e "\nNearest Big City: (Default: Jakarta)"
+	read -r CITY
+	[ -z $CITY ] && CITY="Jakarta"
+	cat /usr/share/zoneinfo/$REGION/$CITY >/dev/null 2>/dev/null || echo "Zone is not found, please try again" && user_zone
+}
+
+local_setting(){
+	#clock
+	user_zone
+	ln -sf /usr/share/zoneinfo/$REGION/$CITY /etc/localtime
+	hwclock --systohc
+	
+	#locale
+	sed -i 's/\#en_US\./en_US\./g' /etc/locale.gen
+	locale-gen
+	pacman -S grub os-prober
+	grub-install --recheck /dev/sda
+	grub-mkconfig -o /boot/grub/grub.cfg
+}
+
+ask_pass(){	
+	echo -e "Password:"
+	read -s PASS
+	echo -e "\nRetype Password:"
+	read -s RE_PASS
+	
+	[ ! "$PASS" = "$RE_PASS" ] && ask_pass
+}
+
+set_user(){
+	echo -e "\nUsername:"
+	read -r USER
+	ask_pass
+	(
+	echo $PASS
+	echo $PASS
+	) | passwd
+	
+	useradd -m $USER
+	(
+	echo $PASS
+	echo $PASS
+	) | passwd $USER
+	
+	echo $USER > /etc/hostname
+	pacman -S dhcpcd connman-openrc connman-gtk cmst
+	rc-update add connmand
+	ip -s link
+	echo -e "\nPut in the correct interface:"
+	read -r INT
+	echo "
+	# my Config
+	config_$INT=\"dhcp\"" >> /etc/conf.d/net
+	ln -s /etc/init.d/net.lo /etc/init.d/net.$INT
+	rc-update add net.$INT default
+	echo "
+	Now type:
+	exit
+	umount -R /mnt	
+	reboot"
+	exit
+}
+
+# Process
+local_setting
+set_user
