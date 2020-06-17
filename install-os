@@ -21,7 +21,7 @@ diskpart() {
 	fdisk -l
 	echo -e "\nChoose the disk: (/dev/sdX)"
 	read -r DRIVE
-	[ -z $DRIVE ] && exit 1
+	[ -z $DRIVE ] && echo "[ ERROR ] \$DRIVE can't be NULL" && exit 1
 	if [ $(fdisk -l | grep "$DRIVE" | wc -l) -gt 0 ]; then
 		echo "[ OK ] Found $DRIVE"
 	else 
@@ -60,6 +60,6 @@ diskpart() {
 }
 
 # Installation steps
-clear
 checksudo
+clear
 diskpart
