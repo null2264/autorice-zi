@@ -8,6 +8,18 @@ checksudo() {
 
 checkdisks() {
 	fdisk -l
+	echo -e "\nChoose the disk: (/dev/sdX)"
+	read -r DRIVE
+	echo -e ""
+	(
+	echo o
+	echo n
+	echo p
+	echo 1
+	echo +4G
+	echo w
+	) | fdisk $DRIVE
+	echo "Done"
 }
 
 # Installation steps
