@@ -32,6 +32,8 @@ diskpart() {
 	free --giga
 	echo -e "\nEnter your RAM value: (Eg: 5)"
 	read -r RAM_TOTAL
+	[ -z $RAM_TOTAL ] && echo "[ ERROR ] \$RAM_TOTAL can't be NULL" && exit 1
+	[ ! $RAM_TOTAL -gt 0 ] && echo "[ ERROR ] \$RAM_TOTAL can't be smaller than 1" && exit 1
 	[ ! $RAM_TOTAL -gt 4 ] && ((SWAP=$RAM_TOTAL*2)) || SWAP=8
 	(
 	echo o # Create new DOS/MBR disklabel
