@@ -51,6 +51,7 @@ diskpart() {
 	echo   # First sector default
 	echo   # Size: the rest of the disk
 	echo t # change partition type
+	echo 2 # choose partition number 2
 	echo 83 # to Linux (to make sure it is Linux)
 	echo a # toggle bootable
 	echo 2 # choose partition number 2
