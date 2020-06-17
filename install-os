@@ -13,12 +13,12 @@ checkdisks() {
 	echo -e ""
 	(
 	echo o # Create new DOS disklabel
-	echo n
-	echo p
-	echo 1
-	echo 
-	echo +4G
-	echo w
+	echo n # New partition
+	echo p # Make it primary
+	echo 1 # Partition number 1
+	echo   # First sector default
+	echo +4G # Size: 4G
+	echo w # write
 	) | fdisk $DRIVE
 	echo "Done"
 }
