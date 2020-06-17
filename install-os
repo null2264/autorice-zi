@@ -2,14 +2,14 @@
 
 checksudo() {
 	if [ "$(id -u)" != "0" ]; then
-		echo "[ ERROR ] Run the script as sudo!" && exit 1
+		echo "[ ERROR ] Script must be run as sudo!" && exit 1
 	fi
 }
 
 checkdisks() {
-	fdisk
+	fdisk -l
 }
 
 # Installation steps
-
 checksudo
+checkdisks
