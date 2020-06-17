@@ -10,14 +10,20 @@ checkdisks() {
 	fdisk -l
 	echo -e "\nChoose the disk: (/dev/sdX)"
 	read -r DRIVE
-	echo -e ""
+	echo ""
+	free --giga
+	echo -e "\nEnter your RAM value: (Eg: 5)"
+	read -r RAM_TOTAL
+	[ ! $RAM_TOTAL -gt 4 ] && ((SWAP=$RAM_TOTAL*2)) || SWAP=8
 	(
-	echo o # Create new DOS disklabel
+	echo o # Create new DOS/MBR disklabel
 	echo n # New partition
 	echo p # Make it primary
 	echo 1 # Partition number 1
 	echo   # First sector default
-	echo +4G # Size: 4G
+	echo +$SWAP\G # Size: 4G
+	echo t # change partition type
+	echo 82 # to swap
 	echo w # write
 	) | fdisk $DRIVE
 	echo "Done"
