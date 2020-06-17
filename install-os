@@ -2,7 +2,7 @@
 
 prompt() {
 	read -r YESNO
-	if [ "$YESNO" = "yes"]; then
+	if [ "$YESNO" = "yes" ]; then
 		return
 	elif [ "$YESNO" = "no" ]; then
 		echo "[ ERROR ] Cancelled" && exit 1
@@ -26,7 +26,7 @@ diskpart() {
 	else 
 		echo "[ ERROR ] $DRIVE not found" && exit 1
 	fi
-	echo "\nAre you sure $DRIVE is the correct location? (yes/no)"
+	echo -e "\nAre you sure $DRIVE is the correct location? (yes/no)"
 	prompt
 	echo ""
 	free --giga
