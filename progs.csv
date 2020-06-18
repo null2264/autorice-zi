@@ -1,4 +1,4 @@
-TAGS,PACKAGE_NAME,DESC
+#TAGS,PACKAGE_NAME,DESC
  ,xf86-video-vesa,X.org vesa video driver
  ,xorg-bdftopcf,Convert X font from Bitmap Distribution Format to Portable Compiled Format
  ,xorg-docs,X.org documentations
