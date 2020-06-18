@@ -44,11 +44,8 @@ diskpart() {
 
 	sel_drive
 	echo ""
-	free --giga
-	echo -e "\nEnter your RAM value: (Eg: 5)"
-	read -r RAM_TOTAL
-	[ -z $RAM_TOTAL ] && echo "[ ERROR ] \$RAM_TOTAL can't be NULL" && exit 1
-	[ ! $RAM_TOTAL -gt 0 ] && echo "[ ERROR ] \$RAM_TOTAL can't be smaller than 1" && exit 1
+	RAM_TOTAL=$(free --giga | grep "Mem" | sed 's/^[A-Za-z]*: *//g;s/ .*//g')
+	[ ! $RAM_TOTAL -gt 0 ] && RAM_TOTAL=1
 	[ ! $RAM_TOTAL -gt 4 ] && ((SWAP=$RAM_TOTAL*2)) || SWAP=8
 	(
 	echo o # Create new DOS/MBR disklabel
@@ -94,7 +91,7 @@ init_install(){
 	echo "Installation will start in 5 second...." && sleep 5s && echo "Installing..."
 	fstabgen -U /mnt >>/mnt/etc/fstab
 	echo -e "\nArtix Linux has been install, now download & run chroot-os"
-	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/chroot-os && chmod +x chroot-os && mv chroot-os /mnt/
+	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/2.0/chroot-os && chmod +x chroot-os && mv chroot-os /mnt/
 	artools-chroot /mnt
 }
 

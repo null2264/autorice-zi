@@ -106,11 +106,22 @@ ask_pass(){
 	PASS=$(dialog --nocancel --passwordbox "Type in your password" 0 0 2>&1 > /dev/tty)
 	RE_PASS=$(dialog --nocancel --passwordbox "Type in your password" 0 0 2>&1 > /dev/tty)
 	[ ! "$PASS" = "$RE_PASS" ] && msgbox "Password doesn't matched" && ask_pass
+	[ -z $PASS ] && ask_pass
+}
+
+ask_user(){
+	USER=$(dialog --nocancel --inputbox "Type in your username" 0 0 2>&1 > /dev/tty)
+	[ -z $USER ] && ask_user
+}
+
+ask_int(){
+	INT_LIST="$(ip -h link | grep "[0-9]: [a-zA-Z0-9]" | cut -d'<' -f1 | sed 's/^[0-9]: //g ; s/:/ -/g' | xargs)"
+	INT=$(dialog --nocancel --menu "Choose your interface" 0 0 0 ${INT_LIST[@]} 2>&1 > /dev/tty)
+	prompt_curse_nokill "Are you sure $INT is correct?" || ask_int
 }
 
 set_user(){
-	echo -e "\nUsername:"
-	read -r USER
+	ask_user
 	ask_pass
 	(
 	echo $PASS
@@ -127,30 +138,28 @@ set_user(){
 
 	echo $USER > /etc/hostname
 	pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk
-	rc-update add connmand
+	rc-update add connmand	
+}
+
+set_network() {
+	echo "Checking dhcpcd..."
+	[ "$(pacman -Q | grep "dhcpcd")" ] || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk
 	
-	# network
-	ip -s link
-	echo -e "\nPut in the correct interface:"
-	read -r INT
+	ask_int
 	echo "
 	config_$INT=\"dhcp\"" >> /etc/conf.d/net
 	ln -s /etc/init.d/net.lo /etc/init.d/net.$INT
 	rc-update add net.$INT default
 	
-	# dhcpcd
-	echo "Checking dhcpcd..."
-	[ "$(pacman -Q | grep "dhcpcd")" ] || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk
-
 	# download rc-network
 	echo "Downloading rc-network..."
 	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/bin/rc-network && chmod +x rc-network && mv rc-network /usr/local/bin/
-	
-	echo -e "Install completed\n"
-	echo -e "Now type:\nexit\numount -R /mnt\nreboot"
-	exit
 }
 
 # Process
 local_setting
 set_user
+set_network
+echo -e "Install completed\n"
+echo -e "Now type:\nexit\numount -R /mnt\nreboot"
+exit
