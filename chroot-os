@@ -54,6 +54,7 @@ set_user(){
 	echo $USER > /etc/hostname
 	pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst
 	rc-update add connmand
+	
 	# network
 	ip -s link
 	echo -e "\nPut in the correct interface:"
@@ -62,9 +63,15 @@ set_user(){
 	config_$INT=\"dhcp\"" >> /etc/conf.d/net
 	ln -s /etc/init.d/net.lo /etc/init.d/net.$INT
 	rc-update add net.$INT default
+	
 	# dhcpcd
 	echo "Checking dhcpcd..."
 	[ "$(pacman -Q | grep "dhcpcd")" ] || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst
+
+	# download rc-network
+	echo "Downloading rc-network..."
+	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/bin/rc-network | mv ./rc-network /usr/bin/rc-network
+	
 	echo "Install completed\n"
 	echo "
 	Now type:
