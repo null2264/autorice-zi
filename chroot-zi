@@ -44,12 +44,12 @@
 # ncurses
 
 prompt_curse(){
-	dialog --yesno "$1" 0 0 2>&1 > /dev/tty || exit 1
+	dialog --title "[chroot-zi] - $2" --yesno "\n$1" 0 0 2>&1 > /dev/tty || exit 1
 	return
 }
 
 prompt_curse_nokill(){
-	dialog --yesno "$1" 0 0 2>&1 > /dev/tty
+	dialog --title "[chroot-zi] - $2" --yesno "\n$1" 0 0 2>&1 > /dev/tty
 }
 
 msgbox(){
@@ -60,14 +60,18 @@ msgbox(){
 
 prepare(){
 	pacman --noconfirm -Sy dialog
-	dialog --title "Welcome to autorice-zi" --yesno "\nThis script will configure the OS automatically\nConfigure now?" 0 0 || exit 1
+	dialog --title "autorice-zi - [chroot-zi]" --msgbox "\nWelcome to chroot-zi.\nThis script is part of autorice-zi, it's created to configure Artix Linux OS automatically after running install-zi.\n" 0 0
+}
+
+welcome(){
+	dialog --title "[chroot-zi] - Welcome" --yesno "\nWould you like to configure Artix Linux?" 0 0 || exit
 }
 
 sel_drive(){
 	DRIVE_LIST=( $(lsblk -nrpo "name,size" | grep "\/dev\/[a-z]* " ) )
-	DRIVE=$(dialog --menu "Choose the correct drive" 0 0 0 ${DRIVE_LIST[@]} 2>&1 > /dev/tty)
+	DRIVE=$(dialog --title "[chroot-zi] - Grub Installer" --menu "\nChoose the correct drive to install grub" 0 0 0 ${DRIVE_LIST[@]} 2>&1 > /dev/tty)
 	[ -z $DRIVE ] && echo "[ ERROR ] Cancelled" && exit 1
-	prompt_curse "Are you sure $DRIVE is the correct location?"
+	prompt_curse "Are you sure $DRIVE is the correct location?" "Grub Installer"
 }
 
 sel_region(){
@@ -79,11 +83,11 @@ sel_region(){
 	# 	Asia -\
 	# 	Australia -\
 	# 	Europe -"
-	REGION=$(dialog --nocancel --menu "Choose your region" 0 0 0 ${REGION_LIST[@]} 2>&1 > /dev/tty)
+	REGION=$(dialog --title "[chroot-zi] - Region Selector" --nocancel --menu "\nChoose your region" 0 0 0 ${REGION_LIST[@]} 2>&1 > /dev/tty)
 	CITY_LIST="$(ls $regiondir/$REGION | sed 's/$/ -/g'| xargs)"
-	CITY=$(dialog --nocancel --menu "Choose the nearest big city/timezone" 0 0 0 ${CITY_LIST[@]} 2>&1 > /dev/tty)
+	CITY=$(dialog --title "[chroot-zi] - City Selector" --nocancel --menu "\nChoose the nearest big city/timezone" 0 0 0 ${CITY_LIST[@]} 2>&1 > /dev/tty)
 
-	prompt_curse_nokill "Are you sure $REGION/$CITY is correct?" || sel_region
+	prompt_curse_nokill "Are you sure $REGION/$CITY is correct?" "Timezone" || sel_region
 }
 
 local_setting(){
@@ -121,8 +125,8 @@ ask_user(){
 
 ask_int(){
 	INT_LIST="$(ip -h link | grep "[0-9]: [a-zA-Z0-9]" | cut -d'<' -f1 | sed 's/^[0-9]: //g ; s/:/ -/g' | xargs)"
-	INT=$(dialog --nocancel --menu "Choose your interface" 0 0 0 ${INT_LIST[@]} 2>&1 > /dev/tty)
-	prompt_curse_nokill "Are you sure $INT is correct?" || ask_int
+	INT=$(dialog --title "[chroot-zi] - Network Interface" --nocancel --menu "\nChoose your network interface" 0 0 0 ${INT_LIST[@]} 2>&1 > /dev/tty)
+	prompt_curse_nokill "Are you sure $INT is correct?" "Network Interface" || ask_int
 }
 
 set_user(){
@@ -163,6 +167,7 @@ set_network() {
 
 # Process
 prepare
+welcome
 local_setting
 set_user
 set_network

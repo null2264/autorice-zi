@@ -37,7 +37,11 @@ checksudo() {
 
 prepare(){
 	pacman --noconfirm -Sy dialog
-	dialog --title "Welcome to autorice-zi" --yesno "\nThis script will install the OS automatically\nInstall now?" 0 0 || exit 1
+	dialog --title "autorice-zi - [install-zi]" --msgbox "\nWelcome to install-zi.\nThis script is part of autorice-zi, it's created to install Artix Linux OS automatically.\n" 0 0
+}
+
+welcome(){
+	dialog --title "[install-zi] - Welcome" --yesno "\nWould you like to install Artix Linux?" 0 0 || exit
 }
 
 diskpart() {
@@ -109,6 +113,7 @@ init_install(){
 # Installation steps
 checksudo
 prepare
+welcome
 clear
 diskpart
 diskpart_setting
