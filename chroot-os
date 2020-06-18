@@ -98,12 +98,8 @@ set_user(){
 	echo "Downloading rc-network..."
 	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/bin/rc-network && chmod +x rc-network && mv rc-network /usr/local/bin/
 	
-	echo "Install completed\n"
-	echo "
-	Now type:
-	exit
-	umount -R /mnt	
-	reboot"
+	echo -e "Install completed\n"
+	echo -e "Now type:\nexit\numount -R /mnt\nreboot"
 	exit
 }
 
