@@ -1,4 +1,10 @@
 #!/bin/sh
+# ===================================================================
+# | install-zi | Auto install artix-linux			    |
+# -------------------------------------------------------------------
+# | Author: Ahmad Ansori Palembani <banipalemban@gmail.com>	    |
+# | License: NULL						    |
+# ===================================================================
 
 prompt() {
 	read -r YESNO
@@ -31,7 +37,7 @@ checksudo() {
 
 prepare(){
 	pacman --noconfirm -Sy dialog
-	dialog --title "Welcome to autorice-zi" --yesno "This script will install the OS automatically\nInstall now?" 0 0 || exit 1
+	dialog --title "Welcome to autorice-zi" --yesno "\nThis script will install the OS automatically\nInstall now?" 0 0 || exit 1
 }
 
 diskpart() {

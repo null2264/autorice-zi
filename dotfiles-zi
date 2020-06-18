@@ -1,34 +1,87 @@
 #!/bin/sh
+# ===================================================================
+# | dotfiles-zi | Install and configure programs to artix linux	    |
+# -------------------------------------------------------------------
+# | Author: Ahmad Ansori Palembani <banipalemban@gmail.com>	    |
+# | License: NULL						    |
+# ===================================================================
+
+# 0 ---- ncurses / others
+
+prompt(){
+	dialog --title "[dotfiles-zi] - $1" --yesno "$2" 0 0
+}
+
+error(){
+	echo "[ ERROR ] $1" && exit 1
+}
+
+msgbox(){
+	dialog --title"[dotfiles-zi] - $1" --msgbox "$2" 0 0
+}
+
+curse_menu(){
+	dialog --title "[dotfiles-zi] - $1" --menu "" 0 0 0 "$2" "$3"
+}
+
+# 0 ---- functions
+
+checksudo(){
+	[ ! "$(id -u)" = "0" ] && error "Script must be run as sudo!"
+}
+
+welcome(){
+	dialog --title "autorice-zi - [dotfile-zi]" --msgbox "\nWelcome to dotfiles-zi.\nIn this script you can install the listed programs or install my dotfiles to you Linux system." 0 0
+}
+
+get_user(){
+	USER_="$(whoami)"
+}
 
 pkg_install(){
 	case $1 in
-		"aur") yay -S $2 ;;
-		"artix") pacman -S $2 ;;
-		"arch") pacman -S $2 ;;
+		"aur") yay --noconfirm -S $2 >/dev/null 2>&1 ;;
+		"artix") pacman --noconfirm -S $2 >/dev/null 2>&1 ;;
+		"arch") pacman -S $2 >/dev/null 2>&1 ;;
+		*) prompt "Package Installer" "\nAre you sure you want to install $(cat /tmp/progs.csv | wc -l) packages?"
 	esac
 }
 
 git_install(){
 	git_pkgname="$(basename "$1" .git)"
-	dir="$HOME/Build/GIT/$git_pkgname"
-	git clone "$1" "dir" >/dev/null 2>&1 || { cd "$dir" || return ; git pull --force origin master }
+	dir="/home/$USER_/Build/GIT/$git_pkgname"
+	sudo -u $USER_ git clone --depth 1 "$1" "$dir" >/dev/null 2>&1 || { cd "$dir" || return ; sudo -u $USER_ git pull --force origin master;}
 	cd $dir || exit
 	make >/dev/null 2>&1
 	make install >/dev/null 2>&1 
 }
 
 init_install() {
-PROGLIST=/tmp/progs.csv
-[ ! -f $PROGLIST ] && curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d'> /tmp/progs.csv
-while IFS=, read -r tags progs comments
-do
-	case $tags in
-		A) pkg_install aur $progs;;
-		T) pkg_install artix $progs;;
-		G) git_install $progs;;
-		*) pkg_install arch $progs ;;
-	esac
-done < $PROGLIST
+	PROGLIST=/tmp/progs.csv
+	[ ! -f $PROGLIST ] && curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d'> /tmp/progs.csv
+	while IFS=, read -r tags progs comments
+	do
+		case $tags in
+			A) pkg_install aur $progs ;;
+			T) pkg_install artix $progs ;;
+			G) git_install $progs ;;
+			*) pkg_install arch $progs ;;
+		esac
+	done < $PROGLIST
 }
 
-init_install
+main_menu() {
+	menus="Install Packages Test"
+	menu_desc="install listed programs"
+	menu_choosen=$(dialog --title "[dotfiles-zi] - $1" --menu "" 0 0 0 "packages" "install listed programs" "dotfiles" "install dotfiles" 2>&1 >/dev/tty) || exit 0
+	case $menu_choosen in
+		packages) pkg_install ;;
+		dotfiles) msgbox "NOT AVAILABLE" "$menu_choosen currently not available" ;;
+	esac
+}
+
+checksudo
+clear
+welcome
+main_menu
+welcome

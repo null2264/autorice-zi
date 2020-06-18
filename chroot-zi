@@ -1,6 +1,6 @@
 #!/bin/sh
 # ===================================================================
-# | chroot-os | Auto configure artix-link			    |
+# | chroot-zi | Auto configure artix-linux			    |
 # -------------------------------------------------------------------
 # | Author: Ahmad Ansori Palembani <banipalemban@gmail.com>	    |
 # | License: NULL						    |
@@ -60,7 +60,7 @@ msgbox(){
 
 prepare(){
 	pacman --noconfirm -Sy dialog
-	dialog --title "Welcome to autorice-zi" --yesno "This script will configure the OS automatically\nConfigure now?" 0 0 || exit 1
+	dialog --title "Welcome to autorice-zi" --yesno "\nThis script will configure the OS automatically\nConfigure now?" 0 0 || exit 1
 }
 
 sel_drive(){
