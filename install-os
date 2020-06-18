@@ -61,8 +61,8 @@ diskpart() {
 }
 
 diskpart_setting(){
-	mkfs.ext4 -L ROOT /dev/sda2
-	mkswap -L SWAP /dev/sda1
+	mkfs.ext4 -L ROOT $DRIVE\2
+	mkswap -L SWAP $DRIVE\1
 
 	swapon /dev/disk/by-label/SWAP
 	mount /dev/disk/by-label/ROOT /mnt
