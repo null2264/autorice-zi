@@ -1,0 +1,24 @@
+#!/bin/sh
+
+pkg_install(){
+	case $1 in
+		"aur") yay -S $2 ;;
+		"artix") pacman -S $2 ;;
+		"arch") pacman -S $2 ;;
+	esac
+}
+
+init_install() {
+PROGLIST=/tmp/progs.csv
+[ ! -f $PROGLIST ] && curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d'> /tmp/progs.csv
+while IFS=, read -r tags progs comments
+do
+	case $tags in
+		A) pkg_install aur $progs;;
+		T) pkg_install artix $progs;;
+		*) pkg_install arch $progs ;;
+	esac
+done < $PROGLIST
+}
+
+init_install
