@@ -96,7 +96,7 @@ init_install(){
 	echo "Installation will start in 5 second...." && sleep 5s && echo "Installing..."
 	fstabgen -U /mnt >>/mnt/etc/fstab
 	echo -e "\nArtix Linux has been install, now download & run chroot-os"
-	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/chroot-os && chmod +x chroot-os && mv chroot-os /mnt/
+	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/chroot-zi && chmod +x chroot-os && mv chroot-os /mnt/
 	artools-chroot /mnt
 }
 
