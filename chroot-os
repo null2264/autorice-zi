@@ -58,6 +58,11 @@ msgbox(){
 
 # Install Functions
 
+prepear(){
+	pacman -Sy dialog
+	dialog --title "Welcome to autorice-zi" --yesno "This script with install the OS automatically\nInstall now?" 0 0 || exit 1
+}
+
 sel_drive(){
 	DRIVE_LIST=( $(lsblk -nrpo "name,size" | grep "\/dev\/[a-z]* " ) )
 	DRIVE=$(dialog --menu "Choose the correct drive" 0 0 0 ${DRIVE_LIST[@]} 2>&1 > /dev/tty)
@@ -157,6 +162,7 @@ set_network() {
 }
 
 # Process
+prepear
 local_setting
 set_user
 set_network

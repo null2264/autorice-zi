@@ -29,6 +29,11 @@ checksudo() {
 	fi
 }
 
+prepear(){
+	pacman -Sy dialog
+	dialog --title "Welcome to autorice-zi" --yesno "This script with install the OS automatically\nInstall now?" 0 0 || exit 1
+}
+
 diskpart() {
 	# fdisk -l | grep "[A-Za-z]* /dev/[a-z]*" | sed 's/:.*//g ; s/^.* //g'
 	# echo -e "\nChoose the disk: (/dev/sdX)"
@@ -97,6 +102,7 @@ init_install(){
 
 # Installation steps
 checksudo
+prepear
 clear
 diskpart
 diskpart_setting
