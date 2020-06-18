@@ -1,2 +1,50 @@
 TAGS,PACKAGE_NAME,DESC
-
+ ,f86-video-vesa,X.org vesa video driver
+ ,org-bdftopcf,Convert X font from Bitmap Distribution Format to Portable Compiled Format
+ ,org-docs,X.org documentations
+ ,org-font-util,X.Org font utilities
+ ,org-fonts-75dpi,X.org 75dpi fonts
+ ,org-fonts-100dpi,X.org 100dpi fonts
+ ,org-fonts-encodings,X.org font encoding files
+ ,org-iceauth,ICE authority file utility
+ ,org-luit,Filter that can be run between an arbitrary application and a UTF-8 terminal emulator
+ ,org-mkfontscale,Create an index of scalable font files for X
+ ,org-server,Xorg X server
+ ,org-server-common,Xorg server common files
+ ,org-server-devel,Development files for the X.Org X server
+ ,org-server-xephyr,A nested X server that runs as an X application
+ ,org-server-xnest,A nested X server that runs as an X application
+ ,org-server-xvfb,Virtual framebuffer X server
+ ,org-server-xwayland,run X clients under wayland
+ ,org-sessreg,Register X sessions in system utmp/utmpx databases
+ ,org-setxkbmap,Set the keyboard using the X Keyboard Extension
+ ,org-smproxy,Allows X applications that do not support X11R6 session management to participate in an X11R6 session
+ ,org-x11perf,Simple X server performance benchmarker
+ ,org-xauth,X.Org authorization settings program
+ ,org-xbacklight,RandR-based backlight control application
+ ,org-xcmsdb,Device Color Characterization utility for X Color Management System
+ ,org-xcursorgen,Create an X cursor file from PNG images
+ ,org-xdpyinfo,Display information utility for X
+ ,org-xdriinfo,Query configuration information of DRI drivers
+ ,org-xev,Print contents of X events
+ ,org-xgamma,Alter a monitor's gamma correction
+ ,org-xhost,Server access control program for X
+ ,org-xinput,Small commandline tool to configure devices
+ ,org-xkbcomp,X Keyboard description compiler
+ ,org-xkbevd,XKB event daemon
+ ,org-xkbutils,XKB utility demos
+ ,org-xkill,Kill a client by its X resource
+ ,org-xlsatoms,List interned atoms defined on server
+ ,org-xlsclients,List client applications running on a display
+ ,org-xmodmap,Utility for modifying keymaps and button mappings
+ ,org-xpr,Print an X window dump from xwd
+ ,org-xprop,Property displayer for X
+ ,org-xrandr,Primitive command line interface to RandR extension
+ ,org-xrdb,X server resource database utility
+ ,org-xrefresh,Refresh all or part of an X screen
+ ,org-xset,User preference utility for X
+ ,org-xsetroot,Classic X utility to set your root window background to a given pattern or color
+ ,org-xvinfo,Prints out the capabilities of any video adaptors associated with the display that are accessible through the X-Video extension
+ ,org-xwd,X Window System image dumping utility
+ ,org-xwininfo,Command-line utility to print information about windows on an X server
+ ,org-xwud,X Window System image undumping utility
