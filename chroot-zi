@@ -58,9 +58,9 @@ msgbox(){
 
 # Install Functions
 
-prepear(){
+prepare(){
 	pacman --noconfirm -Sy dialog
-	dialog --title "Welcome to autorice-zi" --yesno "This script will configure the OS automatically\nInstall now?" 0 0 || exit 1
+	dialog --title "Welcome to autorice-zi" --yesno "This script will configure the OS automatically\nConfigure now?" 0 0 || exit 1
 }
 
 sel_drive(){
@@ -115,8 +115,8 @@ ask_pass(){
 }
 
 ask_user(){
-	USER=$(dialog --nocancel --inputbox "Type in your username" 0 0 2>&1 > /dev/tty)
-	[ -z $USER ] && ask_user
+	USER_=$(dialog --nocancel --inputbox "Type in your username" 0 0 2>&1 > /dev/tty)
+	[ -z $USER_ ] && ask_user
 }
 
 ask_int(){
@@ -133,15 +133,15 @@ set_user(){
 	echo $PASS
 	) | passwd
 	
-	useradd -m $USER
+	useradd -m $USER_
 	(
 	echo $PASS
 	echo $PASS
-	) | passwd $USER
-	usermod -aG games,video,storage,optical,audio,wheel $USER
+	) | passwd $USER_
+	usermod -aG games,video,storage,optical,audio,wheel $USER_
 	sed -i 's/\# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers
 
-	echo $USER > /etc/hostname
+	echo $USER_ > /etc/hostname
 	pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk
 	rc-update add connmand	
 }
@@ -162,7 +162,7 @@ set_network() {
 }
 
 # Process
-prepear
+prepare
 local_setting
 set_user
 set_network

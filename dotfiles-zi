@@ -8,6 +8,15 @@ pkg_install(){
 	esac
 }
 
+git_install(){
+	git_pkgname="$(basename "$1" .git)"
+	dir="$HOME/Build/GIT/$git_pkgname"
+	git clone "$1" "dir" >/dev/null 2>&1 || { cd "$dir" || return ; git pull --force origin master }
+	cd $dir || exit
+	make >/dev/null 2>&1
+	make install >/dev/null 2>&1 
+}
+
 init_install() {
 PROGLIST=/tmp/progs.csv
 [ ! -f $PROGLIST ] && curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d'> /tmp/progs.csv
@@ -16,6 +25,7 @@ do
 	case $tags in
 		A) pkg_install aur $progs;;
 		T) pkg_install artix $progs;;
+		G) git_install $progs;;
 		*) pkg_install arch $progs ;;
 	esac
 done < $PROGLIST
