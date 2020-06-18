@@ -96,7 +96,7 @@ set_user(){
 
 	# download rc-network
 	echo "Downloading rc-network..."
-	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/bin/rc-network && chmod +x ./rc-network && mv ./rc-network /usr/local/bin/
+	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/bin/rc-network && chmod +x rc-network && mv rc-network /usr/local/bin/
 	
 	echo "Install completed\n"
 	echo "
