@@ -12,12 +12,13 @@ prompt() {
 }
 
 prompt_curse(){
-	dialog --yesno $1 0 0 2>&1 > /dev/tty || exit 1
+	dialog --yesno "$1" 0 0 2>&1 > /dev/tty || exit 1
 	return
 }
 
 sel_drive(){
-	DRIVE=$(dialog --menu "Choose the correct drive" 0 0 0 ${install_drive[@]} 2>&1 > /dev/tty)
+	DRIVE_LIST=( $(lsblk -nrpo "name,size" | grep "\/dev\/[a-z]* " ) )
+	DRIVE=$(dialog --menu "Choose the correct drive" 0 0 0 ${DRIVE_LIST[@]} 2>&1 > /dev/tty)
 	[ -z $DRIVE ] && echo "[ ERROR ] Cancelled" && exit 1
 	prompt_curse "Are you sure $DRIVE is the correct location?"
 }
