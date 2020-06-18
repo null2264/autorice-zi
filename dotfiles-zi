@@ -1,10 +1,14 @@
 #!/bin/sh
-# ===================================================================
-# | dotfiles-zi | Install and configure programs to artix linux	    |
-# -------------------------------------------------------------------
-# | Author: Ahmad Ansori Palembani <banipalemban@gmail.com>	    |
-# | License: NULL						    |
-# ===================================================================
+#===================================================================#
+# dotfiles-zi | Install and configure programs to artix linux	    #
+#-------------------------------------------------------------------#
+# Author: Ahmad Ansori Palembani <banipalemban@gmail.com>	    #
+# License: NULL						    	    #
+#===================================================================#
+
+# 0 ---- options / variables
+
+[ -z $aurhelper ] && aurhelper="yay"
 
 # 0 ---- ncurses / others
 
@@ -17,7 +21,7 @@ error(){
 }
 
 msgbox(){
-	dialog --title"[dotfiles-zi] - $1" --msgbox "$2" 0 0
+	dialog --title "[dotfiles-zi] - $1" --msgbox "$2" 0 0
 }
 
 curse_menu(){
@@ -40,10 +44,10 @@ get_user(){
 
 pkg_install(){
 	case $1 in
-		"aur") yay --noconfirm -S $2 >/dev/null 2>&1 ;;
+		"aur") $aurhelper -S $2 ;;
 		"artix") pacman --noconfirm -S $2 >/dev/null 2>&1 ;;
-		"arch") pacman -S $2 >/dev/null 2>&1 ;;
-		*) prompt "Package Installer" "\nAre you sure you want to install $(cat /tmp/progs.csv | wc -l) packages?"
+		"arch") pacman --noconfirm -S $2 >/dev/null 2>&1 ;;
+		*) prompt "Package Installer" "\nAre you sure you want to install $(cat /tmp/progs.csv | wc -l) packages?" || main_menu
 	esac
 }
 
@@ -73,10 +77,10 @@ init_install() {
 main_menu() {
 	menus="Install Packages Test"
 	menu_desc="install listed programs"
-	menu_choosen=$(dialog --title "[dotfiles-zi] - $1" --menu "" 0 0 0 "packages" "install listed programs" "dotfiles" "install dotfiles" 2>&1 >/dev/tty) || exit 0
+	menu_choosen=$(dialog --title "[dotfiles-zi] - Main Menu" --menu "" 0 0 0 "packages" "install listed programs" "dotfiles" "install dotfiles" 2>&1 >/dev/tty) || exit 0
 	case $menu_choosen in
 		packages) pkg_install ;;
-		dotfiles) msgbox "NOT AVAILABLE" "$menu_choosen currently not available" ;;
+		dotfiles) msgbox "NOT AVAILABLE" "\n$menu_choosen currently not available" && main_menu;;
 	esac
 }
 
@@ -84,4 +88,3 @@ checksudo
 clear
 welcome
 main_menu
-welcome
