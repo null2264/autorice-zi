@@ -30,8 +30,8 @@ checksudo() {
 }
 
 prepear(){
-	pacman -Sy dialog
-	dialog --title "Welcome to autorice-zi" --yesno "This script with install the OS automatically\nInstall now?" 0 0 || exit 1
+	pacman --noconfirm -Sy dialog
+	dialog --title "Welcome to autorice-zi" --yesno "This script will install the OS automatically\nInstall now?" 0 0 || exit 1
 }
 
 diskpart() {

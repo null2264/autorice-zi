@@ -59,8 +59,8 @@ msgbox(){
 # Install Functions
 
 prepear(){
-	pacman -Sy dialog
-	dialog --title "Welcome to autorice-zi" --yesno "This script with install the OS automatically\nInstall now?" 0 0 || exit 1
+	pacman --noconfirm -Sy dialog
+	dialog --title "Welcome to autorice-zi" --yesno "This script will configure the OS automatically\nInstall now?" 0 0 || exit 1
 }
 
 sel_drive(){
@@ -109,7 +109,7 @@ ask_pass(){
 	# echo ""
 	
 	PASS=$(dialog --nocancel --passwordbox "Type in your password" 0 0 2>&1 > /dev/tty)
-	RE_PASS=$(dialog --nocancel --passwordbox "Type in your password" 0 0 2>&1 > /dev/tty)
+	RE_PASS=$(dialog --nocancel --passwordbox "Re-type your password" 0 0 2>&1 > /dev/tty)
 	[ ! "$PASS" = "$RE_PASS" ] && msgbox "Password doesn't matched" && ask_pass
 	[ -z $PASS ] && ask_pass
 }
