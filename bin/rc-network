@@ -1,0 +1,26 @@
+#!/bin/sh
+
+checksudo() {
+	if [ ! "$(id -u)" = "0" ]; then
+		echo "[ ERROR ] This script require sudo!"
+		exit 1
+	fi
+}
+usage() {
+	echo "Usage: rc-network add <interface>" && exit 1
+}
+
+add_net() {
+	[ -z $1 ] && usage
+	checksudo
+	echo "
+	config_$1=\"dhcp\"" >> /etc/conf.d/net
+	ln -s /etc/init.d/net.lo /etc/init.d/net.$1
+	rc-update add net.$1 default
+}
+
+case $1 in
+	add) add_net $2;;
+	*) usage ;;
+esac
+
