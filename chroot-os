@@ -12,7 +12,7 @@ prompt() {
 }
 
 choose_drive(){
-	fdisk -l
+	fdisk -l | grep "[A-Za-z]* /dev/[a-z]*" | sed 's/:.*//g ; s/^.* //g'
 	echo -e "\nChoose the disk: (/dev/sdX)"
 	read -r DRIVE
 	[ -z $DRIVE ] && echo "[ ERROR ] \$DRIVE can't be NULL" && exit 1
