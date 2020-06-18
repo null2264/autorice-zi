@@ -1,5 +1,30 @@
 #!/bin/sh
 
+prompt() {
+	read -r YESNO
+	if [ "$YESNO" = "yes" ]; then
+		return
+	elif [ "$YESNO" = "no" ]; then
+		echo "[ ERROR ] Cancelled" && exit 1
+	else
+		prompt
+	fi
+}
+
+choose_drive(){
+	fdisk -l
+	echo -e "\nChoose the disk: (/dev/sdX)"
+	read -r DRIVE
+	[ -z $DRIVE ] && echo "[ ERROR ] \$DRIVE can't be NULL" && exit 1
+	if [ $(fdisk -l | grep "$DRIVE" | wc -l) -gt 0 ]; then
+		echo "[ OK ] Found $DRIVE"
+	else 
+		echo "[ ERROR ] $DRIVE not found" && exit 1
+	fi
+	echo -e "\nAre you sure $DRIVE is the correct location? (yes/no)"
+	prompt
+}
+
 user_zone(){
 	echo -e "\nRegion: (Default: Asia)"
 	read -r REGION
@@ -20,7 +45,8 @@ local_setting(){
 	sed -i 's/\#en_US\./en_US\./g' /etc/locale.gen
 	locale-gen
 	pacman -S --noconfirm grub os-prober
-	grub-install --recheck /dev/sda
+	choose_drive
+	grub-install --recheck $DRIVE
 	grub-mkconfig -o /boot/grub/grub.cfg
 }
 
@@ -52,7 +78,7 @@ set_user(){
 	sed -i 's/\# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers
 
 	echo $USER > /etc/hostname
-	pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst
+	pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk
 	rc-update add connmand
 	
 	# network
@@ -66,11 +92,11 @@ set_user(){
 	
 	# dhcpcd
 	echo "Checking dhcpcd..."
-	[ "$(pacman -Q | grep "dhcpcd")" ] || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst
+	[ "$(pacman -Q | grep "dhcpcd")" ] || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk
 
 	# download rc-network
 	echo "Downloading rc-network..."
-	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/bin/rc-network | mv ./rc-network /usr/bin/rc-network
+	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/bin/rc-network && chmod +x ./rc-network && mv ./rc-network /usr/local/bin/
 	
 	echo "Install completed\n"
 	echo "
