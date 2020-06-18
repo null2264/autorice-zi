@@ -1,43 +1,89 @@
 #!/bin/sh
+# ===================================================================
+# | chroot-os | Auto configure artix-link			    |
+# -------------------------------------------------------------------
+# | Author: Ahmad Ansori Palembani <banipalemban@gmail.com>	    |
+# | License: NULL						    |
+# ===================================================================
 
-prompt() {
-	read -r YESNO
-	if [ "$YESNO" = "yes" ]; then
-		return
-	elif [ "$YESNO" = "no" ]; then
-		echo "[ ERROR ] Cancelled" && exit 1
-	else
-		prompt
-	fi
+# prompt() {
+# 	read -r YESNO
+# 	if [ "$YESNO" = "yes" ]; then
+# 		return
+# 	elif [ "$YESNO" = "no" ]; then
+# 		echo "[ ERROR ] Cancelled" && exit 1
+# 	else
+# 		prompt
+# 	fi
+# }
+
+# choose_drive(){
+# 	fdisk -l | grep "[A-Za-z]* /dev/[a-z]*" | sed 's/:.*//g ; s/^.* //g'
+# 	echo -e "\nChoose the disk: (/dev/sdX)"
+# 	read -r DRIVE
+# 	[ -z $DRIVE ] && echo "[ ERROR ] \$DRIVE can't be NULL" && exit 1
+# 	if [ $(fdisk -l | grep "$DRIVE" | wc -l) -gt 0 ]; then
+# 		echo "[ OK ] Found $DRIVE"
+# 	else 
+# 		echo "[ ERROR ] $DRIVE not found" && exit 1
+# 	fi
+# 	echo -e "\nAre you sure $DRIVE is the correct location? (yes/no)"
+# 	prompt
+# }
+
+# user_zone(){
+# 	echo -e "\nRegion: (Default: Asia)"
+# 	read -r REGION
+# 	[ -z $REGION ] && REGION="Asia"
+# 	echo -e "\nNearest Big City: (Default: Jakarta)"
+# 	read -r CITY
+# 	[ -z $CITY ] && CITY="Jakarta"
+# 	cat /usr/share/zoneinfo/$REGION/$CITY >/dev/null || user_zone
+# }
+
+# ncurses
+
+prompt_curse(){
+	dialog --yesno "$1" 0 0 2>&1 > /dev/tty || exit 1
+	return
 }
 
-choose_drive(){
-	fdisk -l | grep "[A-Za-z]* /dev/[a-z]*" | sed 's/:.*//g ; s/^.* //g'
-	echo -e "\nChoose the disk: (/dev/sdX)"
-	read -r DRIVE
-	[ -z $DRIVE ] && echo "[ ERROR ] \$DRIVE can't be NULL" && exit 1
-	if [ $(fdisk -l | grep "$DRIVE" | wc -l) -gt 0 ]; then
-		echo "[ OK ] Found $DRIVE"
-	else 
-		echo "[ ERROR ] $DRIVE not found" && exit 1
-	fi
-	echo -e "\nAre you sure $DRIVE is the correct location? (yes/no)"
-	prompt
+prompt_curse_nokill(){
+	dialog --yesno "$1" 0 0 2>&1 > /dev/tty
 }
 
-user_zone(){
-	echo -e "\nRegion: (Default: Asia)"
-	read -r REGION
-	[ -z $REGION ] && REGION="Asia"
-	echo -e "\nNearest Big City: (Default: Jakarta)"
-	read -r CITY
-	[ -z $CITY ] && CITY="Jakarta"
-	cat /usr/share/zoneinfo/$REGION/$CITY >/dev/null || user_zone
+msgbox(){
+	dialog --msgbox "$1" 0 0
+}
+
+# Install Functions
+
+sel_drive(){
+	DRIVE_LIST=( $(lsblk -nrpo "name,size" | grep "\/dev\/[a-z]* " ) )
+	DRIVE=$(dialog --menu "Choose the correct drive" 0 0 0 ${DRIVE_LIST[@]} 2>&1 > /dev/tty)
+	[ -z $DRIVE ] && echo "[ ERROR ] Cancelled" && exit 1
+	prompt_curse "Are you sure $DRIVE is the correct location?"
+}
+
+sel_region(){
+	regiondir="/usr/share/zoneinfo"
+	REGION_LIST="$(ls $regiondir | grep "[A-Z][A-Za-z]"| sed 's/$/ -/g'| xargs)"
+	# REGION_LIST="\
+	# 	Africa -\
+	# 	America -\
+	# 	Asia -\
+	# 	Australia -\
+	# 	Europe -"
+	REGION=$(dialog --nocancel --menu "Choose your region" 0 0 0 ${REGION_LIST[@]} 2>&1 > /dev/tty)
+	CITY_LIST="$(ls $regiondir/$REGION | sed 's/$/ -/g'| xargs)"
+	CITY=$(dialog --nocancel --menu "Choose the nearest big city/timezone" 0 0 0 ${CITY_LIST[@]} 2>&1 > /dev/tty)
+
+	prompt_curse_nokill "Are you sure $REGION/$CITY is correct?" || sel_region
 }
 
 local_setting(){
 	#clock
-	user_zone
+	sel_region
 	ln -sf /usr/share/zoneinfo/$REGION/$CITY /etc/localtime
 	hwclock --systohc
 	
@@ -45,19 +91,21 @@ local_setting(){
 	sed -i 's/\#en_US\./en_US\./g' /etc/locale.gen
 	locale-gen
 	pacman -S --noconfirm grub os-prober
-	choose_drive
+	sel_drive
 	grub-install --recheck $DRIVE
 	grub-mkconfig -o /boot/grub/grub.cfg
 }
 
-ask_pass(){	
-	echo -e "Password:"
-	read -s PASS
-	echo -e "\nRetype Password:"
-	read -s RE_PASS
-	echo ""
-
-	[ ! "$PASS" = "$RE_PASS" ] && ask_pass
+ask_pass(){
+	# echo -e "Password:"
+	# read -s PASS
+	# echo -e "\nRetype Password:"
+	# read -s RE_PASS
+	# echo ""
+	
+	PASS=$(dialog --nocancel --passwordbox "Type in your password" 0 0 2>&1 > /dev/tty)
+	RE_PASS=$(dialog --nocancel --passwordbox "Type in your password" 0 0 2>&1 > /dev/tty)
+	[ ! "$PASS" = "$RE_PASS" ] && msgbox "Password doesn't matched" && ask_pass
 }
 
 set_user(){
