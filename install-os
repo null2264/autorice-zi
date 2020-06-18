@@ -11,30 +11,46 @@ prompt() {
 	fi
 }
 
+prompt_curse(){
+	dialog --yesno "$1" 0 0 2>&1 > /dev/tty || exit 1
+	return
+}
+
+sel_drive(){
+	DRIVE_LIST=( $(lsblk -nrpo "name,size" | grep "\/dev\/[a-z]* " ) )
+	DRIVE=$(dialog --menu "Choose the correct drive" 0 0 0 ${DRIVE_LIST[@]} 2>&1 > /dev/tty)
+	[ -z $DRIVE ] && echo "[ ERROR ] Cancelled" && exit 1
+	prompt_curse "Are you sure $DRIVE is the correct location?"
+}
+
 checksudo() {
 	if [ "$(id -u)" != "0" ]; then
 		echo "[ ERROR ] Script must be run as sudo!" && exit 1
 	fi
 }
 
+prepear(){
+	pacman -Sy dialog
+	dialog --title "Welcome to autorice-zi" --yesno "This script with install the OS automatically\nInstall now?" 0 0 || exit 1
+}
+
 diskpart() {
-	fdisk -l | grep "[A-Za-z]* /dev/[a-z]*" | sed 's/:.*//g ; s/^.* //g'
-	echo -e "\nChoose the disk: (/dev/sdX)"
-	read -r DRIVE
-	[ -z $DRIVE ] && echo "[ ERROR ] \$DRIVE can't be NULL" && exit 1
-	if [ $(fdisk -l | grep "$DRIVE" | wc -l) -gt 0 ]; then
-		echo "[ OK ] Found $DRIVE"
-	else 
-		echo "[ ERROR ] $DRIVE not found" && exit 1
-	fi
-	echo -e "\nAre you sure $DRIVE is the correct location? (yes/no)"
-	prompt
+	# fdisk -l | grep "[A-Za-z]* /dev/[a-z]*" | sed 's/:.*//g ; s/^.* //g'
+	# echo -e "\nChoose the disk: (/dev/sdX)"
+	# read -r DRIVE
+	# [ -z $DRIVE ] && echo "[ ERROR ] \$DRIVE can't be NULL" && exit 1
+	# if [ $(fdisk -l | grep "$DRIVE" | wc -l) -gt 0 ]; then
+	# 	echo "[ OK ] Found $DRIVE"
+	# else 
+	# 	echo "[ ERROR ] $DRIVE not found" && exit 1
+	# fi
+	# echo -e "\nAre you sure $DRIVE is the correct location? (yes/no)"
+	# prompt
+
+	sel_drive
 	echo ""
-	free --giga
-	echo -e "\nEnter your RAM value: (Eg: 5)"
-	read -r RAM_TOTAL
-	[ -z $RAM_TOTAL ] && echo "[ ERROR ] \$RAM_TOTAL can't be NULL" && exit 1
-	[ ! $RAM_TOTAL -gt 0 ] && echo "[ ERROR ] \$RAM_TOTAL can't be smaller than 1" && exit 1
+	RAM_TOTAL=$(free --giga | grep "Mem" | sed 's/^[A-Za-z]*: *//g;s/ .*//g')
+	[ ! $RAM_TOTAL -gt 0 ] && RAM_TOTAL=1
 	[ ! $RAM_TOTAL -gt 4 ] && ((SWAP=$RAM_TOTAL*2)) || SWAP=8
 	(
 	echo o # Create new DOS/MBR disklabel
@@ -86,6 +102,7 @@ init_install(){
 
 # Installation steps
 checksudo
+prepear
 clear
 diskpart
 diskpart_setting
