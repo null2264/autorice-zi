@@ -53,7 +53,7 @@ prompt_curse_nokill(){
 }
 
 msgbox(){
-	dialog --msgbox "$1" 0 0
+	dialog --title "[chroot-zi] - $2" --msgbox "$1" 0 0
 }
 
 # Install Functions
@@ -111,15 +111,21 @@ ask_pass(){
 	# echo -e "\nRetype Password:"
 	# read -s RE_PASS
 	# echo ""
-	
-	PASS=$(dialog --nocancel --passwordbox "Type in your password" 0 0 2>&1 > /dev/tty)
-	RE_PASS=$(dialog --nocancel --passwordbox "Re-type your password" 0 0 2>&1 > /dev/tty)
-	[ ! "$PASS" = "$RE_PASS" ] && msgbox "Password doesn't matched" && ask_pass
+	PASS=$(dialog --title "[chroot-zi] - Password" --nocancel --passwordbox "\nType in your password" 0 0 2>&1 > /dev/tty)
+	RE_PASS=$(dialog --title "[chroot-zi] - Password" --nocancel --passwordbox "\nRe-type your password" 0 0 2>&1 > /dev/tty)
+	[ ! "$PASS" = "$RE_PASS" ] && msgbox "\nPassword doesn't matched" "Password" && ask_pass
 	[ -z $PASS ] && ask_pass
+
+}
+ask_rootpass(){
+	SUDO_PASS=$(dialog --title "[chroot-zi] - ROOT Password" --nocancel --passwordbox "\nType in your password" 0 0 2>&1 > /dev/tty)
+	SUDO_RE_PASS=$(dialog --title "[chroot-zi] - ROOT Password" --nocancel --passwordbox "\nRe-type your password" 0 0 2>&1 > /dev/tty)
+	[ ! "$SUDO_PASS" = "$SUDO_RE_PASS" ] && msgbox "\nPassword doesn't matched" "ROOT Password" && ask_rootpass
+	[ -z $SUDO_PASS ] && ask_rootpass
 }
 
 ask_user(){
-	USER_=$(dialog --nocancel --inputbox "Type in your username" 0 0 2>&1 > /dev/tty)
+	USER_=$(dialog --title "[chroot-zi] - Username" --nocancel --inputbox "\nType in your username" 0 0 2>&1 > /dev/tty)
 	[ -z $USER_ ] && ask_user
 }
 
@@ -132,9 +138,11 @@ ask_int(){
 set_user(){
 	ask_user
 	ask_pass
+	prompt_curse_nokill "Do you want to use the same password for ROOT user?" "ROOT Password" || ask_rootpass
+	[ -z $SUDO_PASS ] && SUDO_PASS=$PASS
 	(
-	echo $PASS
-	echo $PASS
+	echo $SUDO_PASS
+	echo $SUDO_PASS
 	) | passwd
 	
 	useradd -m $USER_
@@ -146,7 +154,7 @@ set_user(){
 	sed -i 's/\# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers
 
 	echo $USER_ > /etc/hostname
-	pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk
+	pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst >/dev/null 2>&1 || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk >/dev/null 2>&1
 	rc-update add connmand	
 }
 
@@ -163,6 +171,8 @@ set_network() {
 	# download rc-network
 	echo "Downloading rc-network..."
 	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/bin/rc-network && chmod +x rc-network && mv rc-network /usr/local/bin/
+	echo "Downloading dotfiles-zi..."
+	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/dotfiles-zi && chmod +x dotfiles-zi && mv dotfiles-zi /home/$USER_/
 }
 
 # Process
