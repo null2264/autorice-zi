@@ -48,6 +48,7 @@
  ,xorg-xwd,X Window System image dumping utility
  ,xorg-xwininfo,Command-line utility to print information about windows on an X server
  ,xorg-xwud,X Window System image undumping utility
+ ,nvim,A text editor
  ,zsh,A very advanced and programmable command interpreter (shell) for UNIX
 G,https://github.com/null2264/st-zi.git,suckless's simple terminal with my personal patches
 G,https://github.com/null2264/slock-zi.git,suckless's simple lock with my personal patches

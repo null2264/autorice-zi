@@ -47,7 +47,7 @@ pkg_install(){
 		"aur") $aurhelper -S $2 ;;
 		"artix") pacman --noconfirm -S $2 >/dev/null 2>&1 ;;
 		"arch") pacman --noconfirm -S $2 >/dev/null 2>&1 ;;
-		*) prompt "Package Installer" "\nAre you sure you want to install $(cat /tmp/progs.csv | wc -l) packages?" || main_menu
+		*) prompt "Package Installer" "\nAre you sure you want to install $(curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d' | wc -l) packages?" || main_menu && init_install
 	esac
 }
 
