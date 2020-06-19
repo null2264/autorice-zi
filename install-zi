@@ -105,7 +105,7 @@ init_install(){
 	basestrap /mnt base base-devel openrc linux linux-firmware
 	echo "Installation will start in 5 second...." && sleep 5s && echo "Installing..."
 	fstabgen -U /mnt >>/mnt/etc/fstab
-	echo -e "\nArtix Linux has been install, you may now run chroot-os (./chroot-zi or sh chroot-zi)"
+	echo -e "\nArtix Linux has been install, you may now run chroot-zi (./chroot-zi or sh chroot-zi)"
 	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/chroot-zi && chmod +x chroot-zi && mv chroot-zi /mnt/
 	artools-chroot /mnt
 }
