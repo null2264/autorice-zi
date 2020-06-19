@@ -1,10 +1,10 @@
 #!/bin/sh
-# ===================================================================
-# | install-zi | Auto install artix-linux			    |
-# -------------------------------------------------------------------
-# | Author: Ahmad Ansori Palembani <banipalemban@gmail.com>	    |
-# | License: NULL						    |
-# ===================================================================
+#===================================================================#
+# install-zi  | Auto install artix-linux			    #
+#-------------------------------------------------------------------#
+# Author: Ahmad Ansori Palembani <banipalemban@gmail.com>	    #
+# License: GPLv3 <https://www.gnu.org/licenses/>		    #
+#===================================================================#
 
 prompt() {
 	read -r YESNO
