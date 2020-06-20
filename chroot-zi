@@ -59,7 +59,8 @@ msgbox(){
 # Install Functions
 
 prepare(){
-	pacman --noconfirm -Sy dialog
+	[ -f /usr/bin/dialog ] || ( echo "Installing ncurses..." && pacman --noconfirm -Sy dialog >/dev/null 2>&1 )
+
 	dialog --title "autorice-zi - [chroot-zi]" --msgbox "\nWelcome to chroot-zi.\nThis script is part of autorice-zi, it's created to configure Artix Linux OS automatically after running install-zi.\n" 0 0
 }
 

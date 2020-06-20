@@ -36,7 +36,8 @@ checksudo() {
 }
 
 prepare(){
-	pacman --noconfirm -Sy dialog
+	[ -f /usr/bin/dialog ] || ( echo "Installing ncurses..." && pacman --noconfirm -Sy dialog >/dev/null 2>&1 )
+
 	dialog --title "autorice-zi - [install-zi]" --msgbox "\nWelcome to install-zi.\nThis script is part of autorice-zi, it's created to install Artix Linux OS automatically.\n" 0 0
 }
 

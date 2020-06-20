@@ -44,9 +44,9 @@ get_user(){
 
 pkg_install(){
 	case $1 in
-		"aur") $aurhelper -S $2 ;;
-		"artix") pacman --noconfirm -S $2 >/dev/null 2>&1 ;;
-		"arch") pacman --noconfirm -S $2 >/dev/null 2>&1 ;;
+		"aur") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" && $aurhelper --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
+		"artix") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" && pacman --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
+		"arch") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" && pacman --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
 		*) prompt "Package Installer" "\nAre you sure you want to install $(curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d' | wc -l) packages?" || main_menu && init_install
 	esac
 }
@@ -65,6 +65,7 @@ init_install() {
 	[ ! -f $PROGLIST ] && curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d'> /tmp/progs.csv
 	while IFS=, read -r tags progs comments
 	do
+		n=$((n+1))
 		case $tags in
 			A) pkg_install aur $progs ;;
 			T) pkg_install artix $progs ;;
@@ -74,17 +75,39 @@ init_install() {
 	done < $PROGLIST
 }
 
+get_update() {
+	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/dotfiles-zi || error "Cannot get update"
+	dialog --title "[dotfiles-zi]" --infobox "\nSuccessfully updated dotfiles-zi" && exit
+}
+
 main_menu() {
-	menus="Install Packages Test"
-	menu_desc="install listed programs"
-	menu_choosen=$(dialog --title "[dotfiles-zi] - Main Menu" --menu "" 0 0 0 "packages" "install listed programs" "dotfiles" "install dotfiles" 2>&1 >/dev/tty) || exit 0
+	menu_choosen=$(dialog --title "[dotfiles-zi] - Main Menu" --menu "" 0 0 0 \
+		"packages" "install listed programs" \
+		"dotfiles" "install dotfiles" \
+		"update" "update dotfiles-zi script" 2>&1 >/dev/tty) || exit 0
 	case $menu_choosen in
 		packages) pkg_install ;;
 		dotfiles) msgbox "NOT AVAILABLE" "\n$menu_choosen currently not available" && main_menu;;
+		update) get_update;;
 	esac
+}
+
+get_aur() { # by Luke Smith
+	[ -f "/usr/bin/$1" ] || (
+	dialog --title "[dotfiles-zi]" --infobox "Installing \"$1\", an AUR helper..." 4 50
+	cd /tmp || exit
+	rm -rf /tmp/"$1"*
+	curl -sO https://aur.archlinux.org/cgit/aur.git/snapshot/"$1".tar.gz &&
+	sudo -u "$name" tar -xvf "$1".tar.gz >/dev/null 2>&1 &&
+	cd "$1" &&
+	sudo -u "$name" makepkg --noconfirm -si >/dev/null 2>&1
+	cd /tmp || return) ;	
 }
 
 checksudo
 clear
+
 welcome
+get_aur $aurhelper
+
 main_menu
