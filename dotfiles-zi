@@ -108,6 +108,7 @@ get_aur() { # by Luke Smith
 checksudo
 get_user
 clear
+total=$(curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d' | wc -l)
 
 welcome
 get_aur $aurhelper
