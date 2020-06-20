@@ -44,9 +44,9 @@ get_user(){
 
 pkg_install(){
 	case $1 in
-		"aur") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" && $aurhelper --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
-		"artix") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" && pacman --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
-		"arch") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" && pacman --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
+		"aur") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" 0 0 && $aurhelper --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
+		"artix") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" 0 0 && pacman --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
+		"arch") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" 0 0 && pacman --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
 		*) prompt "Package Installer" "\nAre you sure you want to install $(curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d' | wc -l) packages?" || main_menu && init_install
 	esac
 }
@@ -105,6 +105,7 @@ get_aur() { # by Luke Smith
 }
 
 checksudo
+get_user
 clear
 
 welcome
