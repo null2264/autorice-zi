@@ -73,6 +73,7 @@ init_install() {
 			*) pkg_install arch $progs ;;
 		esac
 	done < $PROGLIST
+	echo "$err"
 }
 
 get_update() {
