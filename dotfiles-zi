@@ -35,7 +35,7 @@ checksudo(){
 }
 
 welcome(){
-	dialog --title "autorice-zi - [dotfile-zi]" --msgbox "\nWelcome to dotfiles-zi.\nIn this script you can install the listed programs or install my dotfiles to you Linux system." 0 0
+	dialog --title "zi-rice - [dotfile-zi]" --msgbox "\nWelcome to dotfiles-zi.\nIn this script you can install the listed programs or install my dotfiles to you Linux system." 0 0
 }
 
 get_user(){
@@ -47,7 +47,7 @@ pkg_install(){
 		"aur") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" 0 0 && $aurhelper --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
 		"artix") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" 0 0 && pacman --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
 		"arch") dialog --title "[dotfiles-zi] - Installing" --infobox "Installing $2... ($n of $total)" 0 0 && pacman --noconfirm -S $2 >/dev/null 2>&1 || err=$((err+1)) ;;
-		*) prompt "Package Installer" "\nAre you sure you want to install $(curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d' | wc -l) packages?" || main_menu && init_install
+		*) prompt "Package Installer" "\nAre you sure you want to install $(curl -Ls https://raw.githubusercontent.com/null2264/zi-rice/master/progs.csv | sed '/^#/d' | wc -l) packages?" || main_menu && init_install
 	esac
 }
 
@@ -62,7 +62,7 @@ git_install(){
 
 init_install() {
 	PROGLIST=/tmp/progs.csv
-	[ ! -f $PROGLIST ] && curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d'> /tmp/progs.csv
+	[ ! -f $PROGLIST ] && curl -Ls https://raw.githubusercontent.com/null2264/zi-rice/master/progs.csv | sed '/^#/d'> /tmp/progs.csv
 	while IFS=, read -r tags progs comments
 	do
 		n=$((n+1))
@@ -77,7 +77,7 @@ init_install() {
 }
 
 get_update() {
-	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/dotfiles-zi || error "Cannot get update"
+	curl -LOs https://raw.githubusercontent.com/null2264/zi-rice/master/dotfiles-zi || error "Cannot get update"
 	dialog --title "[dotfiles-zi]" --infobox "\nSuccessfully updated dotfiles-zi" 0 0 && exit
 }
 
@@ -108,7 +108,7 @@ get_aur() { # by Luke Smith
 checksudo
 get_user
 clear
-total=$(curl -Ls https://raw.githubusercontent.com/null2264/autorice-zi/master/progs.csv | sed '/^#/d' | wc -l)
+total=$(curl -Ls https://raw.githubusercontent.com/null2264/zi-rice/master/progs.csv | sed '/^#/d' | wc -l)
 
 welcome
 get_aur $aurhelper

@@ -38,7 +38,7 @@ checksudo() {
 prepare(){
 	[ -f /usr/bin/dialog ] || ( echo "Installing ncurses..." && pacman --noconfirm -Sy dialog >/dev/null 2>&1 )
 
-	dialog --title "autorice-zi - [install-zi]" --msgbox "\nWelcome to install-zi.\nThis script is part of autorice-zi, it's created to install Artix Linux OS automatically.\n" 0 0
+	dialog --title "zi-rice - [install-zi]" --msgbox "\nWelcome to install-zi.\nThis script is part of zi-rice, it's created to install Artix Linux OS automatically.\n" 0 0
 }
 
 welcome(){
@@ -107,7 +107,7 @@ init_install(){
 	echo "Installation will start in 5 second...." && sleep 5s && echo "Installing..."
 	fstabgen -U /mnt >>/mnt/etc/fstab
 	echo -e "\nArtix Linux has been install, you may now run chroot-zi (./chroot-zi or sh chroot-zi)"
-	curl -LOs https://raw.githubusercontent.com/null2264/autorice-zi/master/chroot-zi && chmod +x chroot-zi && mv chroot-zi /mnt/
+	curl -LOs https://raw.githubusercontent.com/null2264/zi-rice/master/chroot-zi && chmod +x chroot-zi && mv chroot-zi /mnt/
 	artools-chroot /mnt
 }
 
