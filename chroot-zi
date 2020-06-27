@@ -156,6 +156,7 @@ set_user(){
 	sed -i 's/\# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers
 
 	echo $USER_ > /etc/hostname
+	echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$USER_.localdomain	$USER_" >> /etc/hosts
 	pacman -S --noconfirm dhcpcd connman-openrc connman-gtk cmst >/dev/null 2>&1 || pacman -S --noconfirm dhcpcd connman-openrc connman-gtk >/dev/null 2>&1
 	rc-update add connmand	
 }
