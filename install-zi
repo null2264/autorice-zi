@@ -103,7 +103,7 @@ check_internet(){
 
 init_install(){
 	check_internet && pacman -Syy
-	basestrap /mnt base base-devel openrc linux linux-firmware
+	basestrap /mnt base base-devel openrc linux linux-firmware ncurses
 	echo "Installation will start in 5 second...." && sleep 5s && echo "Installing..."
 	fstabgen -U /mnt >>/mnt/etc/fstab
 	echo -e "\nArtix Linux has been install, you may now run chroot-zi (./chroot-zi or sh chroot-zi)"

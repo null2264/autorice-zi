@@ -59,7 +59,7 @@ msgbox(){
 # Install Functions
 
 prepare(){
-	[ -f /usr/bin/dialog ] || ( echo "Installing ncurses..." && pacman --noconfirm -Sy dialog >/dev/null 2>&1 )
+	# [ -f /usr/bin/dialog ] || ( echo "Installing ncurses..." && pacman --noconfirm -Sy dialog >/dev/null 2>&1 )
 
 	dialog --title "zi-rice - [chroot-zi]" --msgbox "\nWelcome to chroot-zi.\nThis script is part of zi-rice, it's created to configure Artix Linux OS automatically after running install-zi.\n" 0 0
 }
@@ -98,8 +98,9 @@ local_setting(){
 	hwclock --systohc
 	
 	#locale
-	sed -i 's/\#en_US\./en_US\./g' /etc/locale.gen
+	sed -i 's/\#en_US/en_US/g' /etc/locale.gen
 	locale-gen
+	echo LANG=en_US.UTF-8 > /etc/locale.conf
 	pacman -S --noconfirm grub os-prober
 	sel_drive
 	grub-install --recheck $DRIVE
